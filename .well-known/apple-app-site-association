@@ -1,0 +1,16 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["88L2Q4487U.com.tencent.wgameoversea.weminomo"],
+        "components": [
+          {
+            "/": "/openApp",
+            "?": { "appid": "?*" },
+            "comment": "Open mini game by appid"
+          }
+        ]
+      }
+    ]
+  }
+}
