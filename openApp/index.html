@@ -54,7 +54,7 @@
   </div>
 
   <script>
-    // Index of the HTML5/JavaScript mini games offered inside the WeMinoMo app.
+    // Index of the mini games offered inside the WeMinoMo app.
     // The page also accepts name/developer via query params, which override this map.
     var GAMES = {
       "wxb2d4a9072e0733fd": { name: "Rescue Animals",            developer: "Shenzhen Weiwang" },
@@ -65,6 +65,9 @@
     };
 
     var BASE = "https://wxgamecommunity.github.io/openApp";
+    // Custom URL scheme registered by the WeMinoMo app. Tapping it opens the app
+    // and launches the game directly, without relying on universal link association.
+    var APP_SCHEME = "weminomo://openApp";
 
     function q(key) {
       var m = new RegExp("[?&]" + key + "=([^&]*)").exec(window.location.search);
@@ -84,11 +87,10 @@
           '<h1 class="game-title">' + esc(name) + '</h1>' +
           '<p class="developer">' + esc(developer) + '</p>' +
           '<p class="meta">App ID: ' + esc(appid) + '</p>' +
-          '<p class="desc">This is an HTML5/JavaScript mini game offered within the ' +
-            'WeMinoMo app. It runs inside the app and is not a standalone web game. ' +
+          '<p class="desc">This is a mini game offered within the WeMinoMo app. ' +
             'Open it in the WeMinoMo app to play.</p>' +
-          '<a class="btn" href="' + BASE + '?appid=' + encodeURIComponent(appid) + '">Open in WeMinoMo</a>' +
-          '<p class="hint">If the WeMinoMo app is installed, this link opens the app ' +
+          '<a class="btn" href="' + APP_SCHEME + '?appid=' + encodeURIComponent(appid) + '">Open in WeMinoMo</a>' +
+          '<p class="hint">If the WeMinoMo app is installed, this button opens the app ' +
             'and launches the game directly.</p>' +
         '</div>';
     }
