@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>WeMinoMo Mini Games</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f2f2f7;
+      color: #1c1c1e;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 28px 20px 56px; }
+    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+    .brand .logo {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, #ff9d3c, #ff6f3c);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 18px;
+    }
+    .brand .name { font-size: 17px; font-weight: 600; }
+    .card {
+      background: #fff; border-radius: 16px; padding: 24px 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .game-title { font-size: 24px; font-weight: 700; margin: 0 0 6px; }
+    .developer { font-size: 15px; color: #636366; margin: 0 0 16px; }
+    .meta { font-size: 13px; color: #8e8e93; margin: 0 0 20px; word-break: break-all; }
+    .desc { font-size: 15px; line-height: 1.5; color: #3a3a3c; margin: 0 0 24px; }
+    .btn {
+      display: block; width: 100%; text-align: center;
+      background: #007aff; color: #fff; text-decoration: none;
+      font-size: 16px; font-weight: 600; padding: 14px 16px; border-radius: 12px;
+    }
+    .hint { font-size: 13px; color: #8e8e93; text-align: center; margin-top: 14px; line-height: 1.5; }
+    .list-title { font-size: 13px; font-weight: 600; color: #8e8e93; text-transform: uppercase; letter-spacing: .04em; margin: 0 0 10px; padding-left: 4px; }
+    .row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: #fff; border-radius: 12px; margin-bottom: 10px; text-decoration: none; color: inherit; }
+    .row .r-name { font-size: 16px; font-weight: 600; }
+    .row .r-dev { font-size: 13px; color: #8e8e93; margin-top: 2px; }
+    .row .chev { color: #c7c7cc; font-size: 20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo">W</div>
+      <div class="name">WeMinoMo</div>
+    </div>
+    <div id="content"></div>
+  </div>
+
+  <script>
+    // Index of the HTML5/JavaScript mini games offered inside the WeMinoMo app.
+    // The page also accepts name/developer via query params, which override this map.
+    var GAMES = {
+      "wxb2d4a9072e0733fd": { name: "Rescue Animals",            developer: "Shenzhen Weiwang" },
+      "wxa0d8bbbf3a3df4a3": { name: "Master of Puzzle",          developer: "Shenzhen Weiwang" },
+      "wxae5e8baa955e4d01": { name: "Mahjong Match Master",      developer: "Xiamen Fengling" },
+      "wxb15ecccc46a23b18": { name: "Screw Scramble",            developer: "Guangzhou Zhishang" },
+      "wxb7783ab7d7af7195": { name: "Tile Party - Matching Game", developer: "Zhise" }
+    };
+
+    var BASE = "https://wxgamecommunity.github.io/openApp";
+
+    function q(key) {
+      var m = new RegExp("[?&]" + key + "=([^&]*)").exec(window.location.search);
+      return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : "";
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+
+    function renderGame(appid, name, developer) {
+      document.title = name + " - WeMinoMo";
+      document.getElementById("content").innerHTML =
+        '<div class="card">' +
+          '<h1 class="game-title">' + esc(name) + '</h1>' +
+          '<p class="developer">' + esc(developer) + '</p>' +
+          '<p class="meta">App ID: ' + esc(appid) + '</p>' +
+          '<p class="desc">This is an HTML5/JavaScript mini game offered within the ' +
+            'WeMinoMo app. It runs inside the app and is not a standalone web game. ' +
+            'Open it in the WeMinoMo app to play.</p>' +
+          '<a class="btn" href="' + BASE + '?appid=' + encodeURIComponent(appid) + '">Open in WeMinoMo</a>' +
+          '<p class="hint">If the WeMinoMo app is installed, this link opens the app ' +
+            'and launches the game directly.</p>' +
+        '</div>';
+    }
+
+    function renderIndex() {
+      document.title = "WeMinoMo Mini Games";
+      var html = '<p class="list-title">Mini games offered in this app</p>';
+      for (var id in GAMES) {
+        html +=
+          '<a class="row" href="' + BASE + '?appid=' + encodeURIComponent(id) + '">' +
+            '<div>' +
+              '<div class="r-name">' + esc(GAMES[id].name) + '</div>' +
+              '<div class="r-dev">' + esc(GAMES[id].developer) + '</div>' +
+            '</div>' +
+            '<div class="chev">&rsaquo;</div>' +
+          '</a>';
+      }
+      document.getElementById("content").innerHTML = html;
+    }
+
+    (function () {
+      var appid = q("appid");
+      if (!appid) { renderIndex(); return; }
+      var known = GAMES[appid] || {};
+      var name = q("name") || known.name || "WeMinoMo Mini Game";
+      var developer = q("developer") || known.developer || "WeMinoMo";
+      renderGame(appid, name, developer);
+    })();
+  </script>
+</body>
+</html>
