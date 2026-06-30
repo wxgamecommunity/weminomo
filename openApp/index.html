@@ -37,6 +37,7 @@
       font-size: 16px; font-weight: 600; padding: 14px 16px; border-radius: 12px;
     }
     .hint { font-size: 13px; color: #8e8e93; text-align: center; margin-top: 14px; line-height: 1.5; }
+    .notice { font-size: 14px; color: #ff3b30; text-align: center; margin-top: 14px; line-height: 1.5; }
     .list-title { font-size: 13px; font-weight: 600; color: #8e8e93; text-transform: uppercase; letter-spacing: .04em; margin: 0 0 10px; padding-left: 4px; }
     .row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: #fff; border-radius: 12px; margin-bottom: 10px; text-decoration: none; color: inherit; }
     .row .r-name { font-size: 16px; font-weight: 600; }
@@ -80,6 +81,30 @@
       });
     }
 
+    // Try to open the game in the app via the custom scheme. If the app is
+    // installed, iOS switches to it and this page is backgrounded; otherwise we
+    // stay on the page and show a "not installed" notice instead of Safari's
+    // raw "address is invalid" error.
+    function openGameInApp(appid) {
+      var timer = setTimeout(function () {
+        if (!document.hidden) { showNotInstalled(); }
+      }, 1500);
+      function appOpened() { clearTimeout(timer); }
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) { appOpened(); }
+      });
+      window.addEventListener("pagehide", appOpened);
+      window.location.href = APP_SCHEME + "?appid=" + encodeURIComponent(appid);
+    }
+
+    function showNotInstalled() {
+      var el = document.getElementById("status");
+      if (!el) { return; }
+      el.className = "notice";
+      el.innerHTML = "The WeMinoMo app does not appear to be installed on this device. " +
+        "Please install WeMinoMo first, then open this link again to play the game.";
+    }
+
     function renderGame(appid, name, developer) {
       document.title = name + " - WeMinoMo";
       document.getElementById("content").innerHTML =
@@ -87,11 +112,15 @@
           '<h1 class="game-title">' + esc(name) + '</h1>' +
           '<p class="developer">' + esc(developer) + '</p>' +
           '<p class="desc">This is a mini game offered within the WeMinoMo app. ' +
-            'Open it in the WeMinoMo app to play.</p>' +
-          '<a class="btn" href="' + APP_SCHEME + '?appid=' + encodeURIComponent(appid) + '">Open in WeMinoMo</a>' +
-          '<p class="hint">If the WeMinoMo app is installed, this button opens the app ' +
+            'Tap the button below to open it in the WeMinoMo app.</p>' +
+          '<a class="btn" id="openBtn" href="' + APP_SCHEME + '?appid=' + encodeURIComponent(appid) + '">Open in WeMinoMo</a>' +
+          '<p id="status" class="hint">If the WeMinoMo app is installed, this opens the app ' +
             'and launches the game directly.</p>' +
         '</div>';
+      document.getElementById("openBtn").addEventListener("click", function (e) {
+        e.preventDefault();
+        openGameInApp(appid);
+      });
     }
 
     function renderIndex() {
@@ -117,6 +146,9 @@
       var name = q("name") || known.name || "WeMinoMo Mini Game";
       var developer = q("developer") || known.developer || "WeMinoMo";
       renderGame(appid, name, developer);
+      // Try to open the game in the app right away, so the link directly opens
+      // the corresponding game in the app on a device where it is installed.
+      openGameInApp(appid);
     })();
   </script>
 </body>
