@@ -64,7 +64,7 @@
       "wxb7783ab7d7af7195": { name: "Tile Party - Matching Game", developer: "Zhise" }
     };
 
-    var BASE = "https://wxgamecommunity.github.io/openApp";
+    var BASE = window.location.href.split(/[?#]/)[0];
 
     function q(key) {
       var m = new RegExp("[?&]" + key + "=([^&]*)").exec(window.location.search);
